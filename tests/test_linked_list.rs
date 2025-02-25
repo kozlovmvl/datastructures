@@ -5,15 +5,15 @@ pub mod tests {
     #[test]
     fn test_new_empty_list() {
         let list: List<i32> = List::new(None);
-        assert_eq!(list.len, 0);
+        assert_eq!(list.len(), 0);
     }
 
     #[test]
     fn test_new_nonempty_list() {
         let head: Node<i32> = Node::new(1);
         let list: List<i32> = List::new(Some(Box::new(head.clone())));
-        assert_eq!(list.len, 1);
-        assert_eq!(list.head.unwrap().val, head.val);
+        assert_eq!(list.len(), 1);
+        assert_eq!(list.head().unwrap().val, head.val);
     }
 
     #[test]
@@ -22,7 +22,7 @@ pub mod tests {
         let node: Node<i32> = Node::new(2);
         let mut list: List<i32> = List::new(Some(Box::new(head)));
         list.push(Box::new(node));
-        assert_eq!(list.len, 2);
+        assert_eq!(list.len(), 2);
     }
 
     #[test]
@@ -32,10 +32,10 @@ pub mod tests {
         let mut list: List<i32> = List::new(Some(Box::new(head.clone())));
         list.push(Box::new(node.clone()));
         let first_pop = list.pop();
-        assert_eq!(list.len, 1);
+        assert_eq!(list.len(), 1);
         assert_eq!(first_pop.unwrap().val, node.val);
         let second_pop = list.pop();
-        assert_eq!(list.len, 0);
+        assert_eq!(list.len(), 0);
         assert_eq!(second_pop.unwrap().val, head.val);
     }
 
@@ -45,12 +45,12 @@ pub mod tests {
         let node: Node<i32> = Node::new(2);
         let mut list: List<i32> = List::new(Some(Box::new(head.clone())));
         list.push(Box::new(node.clone()));
-        let mut iter = ListIterator::new(list.head.as_ref());
+        let mut iter = ListIterator::new(list.head());
         assert_eq!(iter.next().unwrap().val, 1);
         assert_eq!(iter.next().unwrap().val, 2);
 
         let list: List<i32> = List::new(None);
-        let mut iter = ListIterator::new(list.head.as_ref());
+        let mut iter = ListIterator::new(list.head());
         assert!(iter.next().is_none());
     }
 }

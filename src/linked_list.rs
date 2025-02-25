@@ -11,8 +11,8 @@ pub struct List<T>
 where
     T: Clone,
 {
-    pub head: Option<Box<Node<T>>>,
-    pub len: usize,
+    head: Option<Box<Node<T>>>,
+    len: usize,
 }
 
 pub struct ListIterator<'a, T>
@@ -35,6 +35,14 @@ impl<T> List<T>
 where
     T: Clone,
 {
+    pub fn head(&self) -> Option<&Box<Node<T>>> {
+        self.head.as_ref()
+    }
+
+    pub fn len(&self) -> usize {
+        return self.len;
+    }
+
     pub fn new(head: Option<Box<Node<T>>>) -> Self {
         if head.is_none() {
             return Self { head, len: 0 };
