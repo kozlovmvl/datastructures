@@ -1,6 +1,6 @@
 #[cfg(test)]
 pub mod tests {
-    use datastructures::linked_list::{List, Node};
+    use datastructures::linked_list::{List, ListIterator, Node};
 
     #[test]
     fn test_new_empty_list() {
@@ -37,5 +37,20 @@ pub mod tests {
         let second_pop = list.pop();
         assert_eq!(list.len, 0);
         assert_eq!(second_pop.unwrap().val, head.val);
+    }
+
+    #[test]
+    fn test_iterator() {
+        let head: Node<i32> = Node::new(1);
+        let node: Node<i32> = Node::new(2);
+        let mut list: List<i32> = List::new(Some(Box::new(head.clone())));
+        list.push(Box::new(node.clone()));
+        let mut iter = ListIterator::new(list.head.as_ref());
+        assert_eq!(iter.next().unwrap().val, 1);
+        assert_eq!(iter.next().unwrap().val, 2);
+
+        let list: List<i32> = List::new(None);
+        let mut iter = ListIterator::new(list.head.as_ref());
+        assert!(iter.next().is_none());
     }
 }

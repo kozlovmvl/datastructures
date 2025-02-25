@@ -15,6 +15,13 @@ where
     pub len: usize,
 }
 
+pub struct ListIterator<'a, T>
+where
+    T: Clone + 'a,
+{
+    cur: Option<&'a Box<Node<T>>>,
+}
+
 impl<T> Node<T>
 where
     T: Clone,
@@ -69,6 +76,35 @@ where
         let res = prev.next.as_deref().unwrap().clone();
         prev.next = None;
         self.len -= 1;
+        return Some(res);
+    }
+
+    pub fn iter<'a>(&'static self) -> ListIterator<'a, T> {
+        ListIterator::new(self.head.as_ref())
+    }
+}
+
+impl<'a, T> ListIterator<'a, T>
+where
+    T: Clone + 'a,
+{
+    pub fn new(head: Option<&'a Box<Node<T>>>) -> Self {
+        Self { cur: head }
+    }
+}
+
+impl<'a, T> Iterator for ListIterator<'a, T>
+where
+    T: Clone + 'a,
+{
+    type Item = &'a Box<Node<T>>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.cur.is_none() {
+            return None;
+        }
+        let res = self.cur.unwrap();
+        self.cur = res.next.as_ref();
         return Some(res);
     }
 }
