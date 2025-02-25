@@ -87,7 +87,7 @@ where
         return Some(res);
     }
 
-    pub fn iter<'a>(&'static self) -> ListIterator<'a, T> {
+    pub fn iter(&self) -> ListIterator<T> {
         ListIterator::new(self.head.as_ref())
     }
 }
