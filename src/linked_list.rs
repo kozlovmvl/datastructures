@@ -1,3 +1,8 @@
+use std::{
+    fmt::Debug,
+    ops::{Index, IndexMut},
+};
+
 #[derive(Clone, Debug)]
 pub struct Node<T>
 where
@@ -114,5 +119,33 @@ where
         let res = self.cur.unwrap();
         self.cur = res.next.as_ref();
         return Some(res);
+    }
+}
+
+impl<T> Index<usize> for List<T>
+where
+    T: Clone,
+{
+    type Output = Box<Node<T>>;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        let mut cur = self.head.as_ref().unwrap();
+        for _ in 0..index {
+            cur = cur.next.as_ref().unwrap();
+        }
+        return cur;
+    }
+}
+
+impl<T> IndexMut<usize> for List<T>
+where
+    T: Clone,
+{
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        let mut cur = self.head.as_mut().unwrap();
+        for _ in 0..index {
+            cur = cur.next.as_mut().unwrap();
+        }
+        return cur;
     }
 }

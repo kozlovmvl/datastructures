@@ -53,4 +53,19 @@ pub mod tests {
         let mut iter = list.iter();
         assert!(iter.next().is_none());
     }
+
+    #[test]
+    fn test_index() {
+        let head: Node<i32> = Node::new(1);
+        let node: Node<i32> = Node::new(2);
+        let mut list: List<i32> = List::new(Some(Box::new(head.clone())));
+        list.push(Box::new(node.clone()));
+        for i in 0..list.len() {
+            assert_eq!(list[i].val, (i + 1) as i32);
+        }
+        for i in 0..list.len() {
+            list[i].val += 1;
+            assert_eq!(list[i].val, (i + 2) as i32);
+        }
+    }
 }
