@@ -1,4 +1,6 @@
+use std::borrow::Borrow;
 use std::cell::RefCell;
+use std::fmt::Debug;
 use std::rc::Rc;
 
 #[derive(Clone)]
@@ -6,7 +8,7 @@ pub struct Node<T>
 where
     T: Clone,
 {
-    val: T,
+    pub val: T,
     left: Option<Rc<RefCell<Node<T>>>>,
     right: Option<Rc<RefCell<Node<T>>>>,
 }
@@ -38,5 +40,84 @@ where
 {
     pub fn new(root: Option<Rc<RefCell<Node<T>>>>) -> Self {
         Self { root }
+    }
+
+    pub fn root(&self) -> Option<&Rc<RefCell<Node<T>>>> {
+        self.root.as_ref()
+    }
+
+    pub fn as_vec(&self) -> Vec<Option<T>> {
+        let mut array: Vec<Option<T>> = Vec::new();
+
+        fn rec<T>(node: Rc<RefCell<Node<T>>>, array: &mut Vec<Option<T>>)
+        where
+            T: Clone,
+        {
+            let node_ = (*node).borrow();
+            let left = node_.left.borrow();
+            let right = node_.right.borrow();
+            if left.is_none() {
+                array.push(None);
+            } else {
+                array.push(Some((*left.clone().unwrap()).borrow().val.clone()));
+            }
+            if right.is_none() {
+                array.push(None);
+            } else {
+                array.push(Some((*right.clone().unwrap()).borrow().val.clone()));
+            }
+
+            if let Some(l) = left {
+                rec(Rc::clone(&l), array);
+            }
+            if let Some(r) = right {
+                rec(Rc::clone(&r), array);
+            }
+        }
+        if let Some(root_) = self.root.as_ref() {
+            array.push(Some((**root_).borrow().val.clone()));
+            rec(Rc::clone(root_), &mut array);
+        } else {
+            array.push(None);
+        }
+
+        array
+    }
+}
+
+impl<T> From<&[Option<T>]> for Tree<T>
+where
+    T: Clone + Debug,
+{
+    fn from(value: &[Option<T>]) -> Self {
+        let root = Rc::new(RefCell::new(Node::new(value[0].clone().unwrap())));
+
+        fn rec<T>(root: Rc<RefCell<Node<T>>>, value: &[Option<T>], i: usize) -> usize
+        where
+            T: Clone + Debug,
+        {
+            if i >= value.len() {
+                return i;
+            }
+            let mut j = i + 2;
+            if let Some(val) = value[i].clone() {
+                println!("{:?} {:?}", &val, &value);
+                let left = Rc::new(RefCell::new(Node::new(val)));
+                (*root).borrow_mut().left = Some(Rc::clone(&left));
+                j = rec(Rc::clone(&left), value, i + 2);
+            }
+            if let Some(val) = value[i + 1].clone() {
+                println!("{:?} {:?}", &val, &value);
+                let right = Rc::new(RefCell::new(Node::new(val)));
+                (*root).borrow_mut().right = Some(Rc::clone(&right));
+                j = rec(Rc::clone(&right), value, j);
+            }
+            j
+        }
+
+        rec(Rc::clone(&root), value, 1);
+
+        let tree = Tree::new(Some(root));
+        tree
     }
 }
