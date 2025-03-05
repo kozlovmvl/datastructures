@@ -1,6 +1,5 @@
 use std::borrow::Borrow;
 use std::cell::RefCell;
-use std::fmt::Debug;
 use std::rc::Rc;
 
 #[derive(Clone)]
@@ -87,27 +86,25 @@ where
 
 impl<T> From<&[Option<T>]> for Tree<T>
 where
-    T: Clone + Debug,
+    T: Clone,
 {
     fn from(value: &[Option<T>]) -> Self {
         let root = Rc::new(RefCell::new(Node::new(value[0].clone().unwrap())));
 
         fn rec<T>(root: Rc<RefCell<Node<T>>>, value: &[Option<T>], i: usize) -> usize
         where
-            T: Clone + Debug,
+            T: Clone,
         {
             if i >= value.len() {
                 return i;
             }
             let mut j = i + 2;
             if let Some(val) = value[i].clone() {
-                println!("{:?} {:?}", &val, &value);
                 let left = Rc::new(RefCell::new(Node::new(val)));
                 (*root).borrow_mut().left = Some(Rc::clone(&left));
                 j = rec(Rc::clone(&left), value, i + 2);
             }
             if let Some(val) = value[i + 1].clone() {
-                println!("{:?} {:?}", &val, &value);
                 let right = Rc::new(RefCell::new(Node::new(val)));
                 (*root).borrow_mut().right = Some(Rc::clone(&right));
                 j = rec(Rc::clone(&right), value, j);
