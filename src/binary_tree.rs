@@ -37,12 +37,22 @@ impl<T> Tree<T>
 where
     T: Clone,
 {
-    pub fn new(root: Option<Rc<RefCell<Node<T>>>>) -> Self {
-        Self { root }
+    pub fn new(root: Option<T>) -> Self {
+        match root {
+            Some(v) => {
+                return Self {
+                    root: Some(Rc::new(RefCell::new(Node::new(v)))),
+                }
+            }
+            None => return Self { root: None },
+        }
     }
 
-    pub fn root(&self) -> Option<&Rc<RefCell<Node<T>>>> {
-        self.root.as_ref()
+    pub fn root(&self) -> Option<T> {
+        match self.root.as_ref() {
+            Some(node) => return Some((**node).borrow().val.clone()),
+            None => return None,
+        }
     }
 
     pub fn as_vec(&self) -> Vec<Option<T>> {
@@ -114,7 +124,7 @@ where
 
         rec(Rc::clone(&root), value, 1);
 
-        let tree = Tree::new(Some(root));
+        let tree = Self { root: Some(root) };
         tree
     }
 }
