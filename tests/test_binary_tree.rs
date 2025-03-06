@@ -1,8 +1,6 @@
 #[cfg(test)]
 pub mod tests {
-    use std::{cell::RefCell, rc::Rc};
-
-    use datastructures::binary_tree::{Node, Tree};
+    use datastructures::binary_tree::Tree;
 
     #[test]
     fn test_new_empty_tree() {
@@ -12,16 +10,15 @@ pub mod tests {
 
     #[test]
     fn test_new_nonempty_tree() {
-        let root = Rc::new(RefCell::new(Node::new(1)));
-        let tree = Tree::new(Some(Rc::clone(&root)));
-        assert_eq!(tree.root().unwrap().borrow().val, root.borrow().val);
+        let tree = Tree::new(Some(1));
+        assert_eq!(tree.root(), Some(1));
     }
 
     #[test]
     fn test_create_from_vec() {
         let vec: Vec<Option<i32>> = vec![Some(1), Some(2), None, None, None];
         let tree = Tree::from(vec.as_ref());
-        assert_eq!(tree.root().unwrap().borrow().val, 1);
+        assert_eq!(tree.root(), Some(1));
     }
 
     #[test]
