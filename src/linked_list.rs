@@ -40,24 +40,32 @@ impl<T> List<T>
 where
     T: Clone,
 {
-    pub fn head(&self) -> Option<&Box<Node<T>>> {
-        self.head.as_ref()
+    pub fn head(&self) -> Option<T> {
+        match self.head.as_ref() {
+            Some(node) => return Some(node.val.clone()),
+            None => return None,
+        }
     }
 
     pub fn len(&self) -> usize {
         return self.len;
     }
 
-    pub fn new(head: Option<Box<Node<T>>>) -> Self {
-        if head.is_none() {
-            return Self { head, len: 0 };
+    pub fn new(head: Option<T>) -> Self {
+        match head {
+            Some(v) => {
+                return Self {
+                    head: Some(Box::new(Node::new(v))),
+                    len: 1,
+                }
+            }
+            None => return Self { head: None, len: 0 },
         }
-        Self { head, len: 1 }
     }
 
-    pub fn push(&mut self, node: Box<Node<T>>) {
+    pub fn push(&mut self, val: T) {
         if self.head.is_none() {
-            self.head = Some(node);
+            self.head = Some(Box::new(Node::new(val)));
             self.len = 1;
         } else {
             let mut cur = self.head.as_deref_mut().unwrap();
@@ -67,17 +75,17 @@ where
                 }
                 cur = cur.next.as_deref_mut().unwrap();
             }
-            cur.next = Some(node);
+            cur.next = Some(Box::new(Node::new(val)));
             self.len += 1;
         }
     }
 
-    pub fn pop(&mut self) -> Option<Node<T>> {
+    pub fn pop(&mut self) -> Option<T> {
         if self.len == 0 {
             return None;
         }
         if self.len == 1 {
-            let res = self.head.as_deref().unwrap().clone();
+            let res = self.head.as_deref().unwrap().val.clone();
             self.head = None;
             self.len = 0;
             return Some(res);
@@ -86,7 +94,7 @@ where
         for _ in 1..self.len - 1 {
             prev = prev.next.as_deref_mut().unwrap();
         }
-        let res = prev.next.as_deref().unwrap().clone();
+        let res = prev.next.as_deref().unwrap().val.clone();
         prev.next = None;
         self.len -= 1;
         return Some(res);
